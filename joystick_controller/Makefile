@@ -1,4 +1,4 @@
-BOARD_TAG    = atmega1284
+BOARD_TAG    = atmega328
 ARDUINO_LIBS =
 ARDUINO_PORT = /dev/ttyS0
 MONITOR_PORT  = /dev/ttyS0
