@@ -1,0 +1,41 @@
+/*
+ * globals.h
+ */
+
+#define HORIZONTAL_STEPPER 1
+#define VERTICAL_STEPPER 2
+
+#define STEPPER_1_C1 8
+#define STEPPER_1_C2 9
+#define STEPPER_1_C3 10
+#define STEPPER_1_C4 11
+
+#define STEPPER_2_C1 4
+#define STEPPER_2_C2 5
+#define STEPPER_2_C3 6
+#define STEPPER_2_C4 7
+
+#define STEPPER_DELAY_TIME 10
+
+#define DEBUGGING_MODE 0
+
+enum I2C_MEMBERS {
+  I2C_MASTER = 10,
+  I2C_STEPPER_CONTROLLER = 11,
+  I2C_THRUST_CONTROLLER = 12,
+  I2C_SENSOR_ARRAY = 13
+};
+
+// Enumeration of the possible ROV commands.
+enum COMMAND_TABLE {
+  CMD_STANDBY	       = 0,
+  CMD_MOVE_FORWARD     = 1,
+  CMD_MOVE_REVERSE     = 2,
+  CMD_ROTATE_UPWARDS   = 3,
+  CMD_ROTATE_DOWNWARDS = 4,
+  CMD_ROTATE_LEFT      = 5,
+  CMD_ROTATE_RIGHT     = 6,
+  CMD_FILL_BALLASTS    = 7,
+  CMD_DRAIN_BALLASTS   = 8
+};
+
