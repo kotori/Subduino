@@ -28,8 +28,8 @@ void sendCmd( int msg, int member ) {
 }
 
 // Perform an action based upon the passed command.
-//  This can be gathering sensor data or sending an action
-//  to one of the slave I2C devices.
+// This can be gathering sensor data or sending an action
+// to one of the slave I2C devices.
 void doLogic( int cmd ) {
 
   #if defined(DEBUGGING_MODE) && DEBUGGING_MODE > 0
@@ -76,10 +76,8 @@ void doLogic( int cmd ) {
 
 void setup() {
 
-#if defined(DEBUGGING_MODE) && DEBUGGING_MODE > 0
   // Start the serial interface at the specified baudrate.
   Serial.begin( SERIAL_BAUDRATE );
-#endif
 
   // Join the I2C bus with the master designation.
   Wire.begin( I2C_MASTER );

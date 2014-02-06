@@ -38,3 +38,10 @@ vim Makefile
 make && make upload
 ```
 
+#### Connect joystick controller (ATMega644/1284)
+```bash
+cd joystick_controller/
+vim Makefile
+make && make upload
+```
+
