@@ -12,7 +12,7 @@ joystick::joystick( byte x, byte y, int numButtons, ... ) {
   va_list fncArgs;
   va_start( fncArgs, numButtons );
   for( int argCounter = 0; argCounter < numButtons; argCounter++ ) {
-    _button[argCounter] = va_arg( fncArgs, int );
+    _button[argCounter].pin = va_arg( fncArgs, int );
   }
   va_end( fncArgs );
 
@@ -43,19 +43,19 @@ void joystick::setYPos( long pos ) {
 }
 
 int joystick::getButton( int id ) {
-  return _button[id];
+  return _button[id].pin;
 }
 
-void joystick::setButton( int id, int pin ) {
-  _button[id] = pin;
+void joystick::setButton( int id, int newPin ) {
+  _button[id].pin = newPin;
 }
 
 boolean joystick::isPressed( int id ) {
   // Get the state of the passed button id.
-  int state = digitalRead( _button[id] );
+  _button[id].state = digitalRead( _button[id].pin );
 
   // The Joystick buttons are floating HIGH, so a LOW voltage is actually a press.
-  if( state == LOW ) {
+  if( _button[id].state == LOW ) {
     return true;
   }
   else {

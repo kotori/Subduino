@@ -3,8 +3,16 @@
 
 #include <Arduino.h>
 
-const int NUM_BUTTONS =	4;
+#define NUM_BUTTONS 4
+#define BUTTON_BOUNCE_DELAY 50
+
 #define uint8_t byte
+
+struct joystick_button {
+  long lastPress;
+  int pin;
+  int state;
+};
 
 class joystick {
 public:
@@ -20,7 +28,7 @@ public:
   void setYPos( long pos );
 
   int getButton( int id );
-  void setButton( int id, int pin );
+  void setButton( int id, int newPin );
 
   boolean isPressed( int id );
 
@@ -31,7 +39,8 @@ private:
   long _xPos;
   long _yPos;
 
-  int _button[NUM_BUTTONS];
+  joystick_button _button[NUM_BUTTONS];
 };
 
 #endif // JOYSTICK_H_INC
+
