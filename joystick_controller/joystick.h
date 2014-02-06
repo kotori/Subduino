@@ -9,7 +9,6 @@
 #define uint8_t byte
 
 struct joystick_button {
-  long lastPress;
   int pin;
   int state;
 };
@@ -30,7 +29,7 @@ public:
   int getButton( int id );
   void setButton( int id, int newPin );
 
-  boolean isPressed( int id );
+  boolean isButtonPressed( int id );
 
 private:
   byte _xPin;

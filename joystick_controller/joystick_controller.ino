@@ -32,6 +32,12 @@ const int MAIN_LOOP_DELAY = 10;
 
 joystick *joy;
 
+void sendNetworkMsg( byte msg ) {
+  Mirf.send( (byte *) msg );
+
+  while( !Mir
+}
+
 void setup() {
   Serial.begin( SERIAL_BAUDRATE );
 
@@ -56,6 +62,10 @@ void setup() {
 
   // Set Mirf receiving address.
   Mirf.setRADDR( (byte *) "commr" );
+
+  // Set Mirf transmit address.
+  Mirf.setTADDR((byte *)"comms");
+
   Mirf.payload = sizeof( unsigned long );
 
   // Write config and power up receiver.
@@ -85,15 +95,14 @@ void loop() {
   }
 
   // Iterate through the joystick buttons and check if any are pressed.
-  for( int counter=0; counter<NUM_BUTTONS; counter++ ) {
-    if( joy->isPressed( counter ) == true ) {
+  for( int counter = 0; counter < NUM_BUTTONS; counter++ ) {
+    if( joy->isButtonPressed( counter ) == true ) {
       // A button matching 'counter' has been pressed!
       // Perform some ACTION!
     }
   }
 
   delay( MAIN_LOOP_DELAY );
-
 }
 
 
