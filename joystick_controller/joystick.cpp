@@ -50,3 +50,16 @@ void joystick::setButton( int id, int pin ) {
   _button[id] = pin;
 }
 
+boolean joystick::isPressed( int id ) {
+  // Get the state of the passed button id.
+  int state = digitalRead( _button[id] );
+
+  // The Joystick buttons are floating HIGH, so a LOW voltage is actually a press.
+  if( state == LOW ) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+

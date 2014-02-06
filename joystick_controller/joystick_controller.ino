@@ -65,7 +65,6 @@ void setup() {
 }
 
 void loop() {
-
   int x, y;
 
   x = analogRead( joy->getXPin() );
@@ -83,6 +82,14 @@ void loop() {
   }
   else {
     joy->setYPos( -1 );
+  }
+
+  // Iterate through the joystick buttons and check if any are pressed.
+  for( int counter=0; counter<NUM_BUTTONS; counter++ ) {
+    if( joy->isPressed( counter ) == true ) {
+      // A button matching 'counter' has been pressed!
+      // Perform some ACTION!
+    }
   }
 
   delay( MAIN_LOOP_DELAY );

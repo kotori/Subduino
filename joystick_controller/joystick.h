@@ -6,11 +6,6 @@
 const int NUM_BUTTONS =	4;
 #define uint8_t byte
 
-struct joystickButton {
-  int buttonId;
-  byte buttonPin;
-};
-
 class joystick {
 public:
   joystick( byte x, byte y, int numButtons, ... );
@@ -26,6 +21,8 @@ public:
 
   int getButton( int id );
   void setButton( int id, int pin );
+
+  boolean isPressed( int id );
 
 private:
   byte _xPin;
