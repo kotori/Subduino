@@ -63,6 +63,9 @@ void joystick::setButton( int id, int newPin ) {
  *    Should have some sort of a debounce check built in.
  */
 boolean joystick::isButtonPressed( int id ) {
+  // Set the initial value of the reading as bad.
+  boolean goodReading = false;
+
   // Get the state of the passed button.
   //_button[id].state = digitalRead( _button[id].pin );
   int reading = digitalRead( _button[id].pin );
@@ -82,19 +85,11 @@ boolean joystick::isButtonPressed( int id ) {
       _button[id].state = reading;
       // ONLY toggle the button when a LOW signal is received.
       if( _button[id].state == LOW ) {
-        _button[id].prevState = reading;
-        return true;
-      }
-      else {
-        return false;
+        goodReading = true;
       }
     }
-    else {
-      return false;
-    }
   }
-  else {
-    return false;
-  }
+  _button[id].prevState = reading;
+  return goodReading;
 }
 
