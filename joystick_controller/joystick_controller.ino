@@ -8,8 +8,6 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#include <stdarg.h>
-
 #include "Mirf.h"
 #include "nRF24L01.h"
 #include "MirfHardwareSpiDriver.h"
@@ -34,8 +32,6 @@ joystick *joy;
 
 void sendNetworkMsg( byte msg ) {
   Mirf.send( (byte *) msg );
-
-  while( !Mir
 }
 
 void setup() {

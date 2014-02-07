@@ -1,5 +1,6 @@
 
 #include <Arduino.h>
+#include <stdarg.h>
 #include "joystick.h"
 
 joystick::joystick( byte x, byte y, int numButtons, ... ) {
