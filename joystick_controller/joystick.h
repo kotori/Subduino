@@ -22,6 +22,8 @@ public:
   byte getXPin();
   byte getYPin();
 
+  void getPos( long &xPos, long &yPos );
+
   long getXPos();
   long getYPos();
 

@@ -7,8 +7,11 @@
 joystick::joystick( byte x, byte y, int numButtons, ... ) {
   _xPin = x;
   _yPin = y;
+
   _xPos = 0;
+  _xPrevPos = 0;
   _yPos = 0;
+  _yPrevPos = 0;
 
   // Now setup our buttons from the variable list.
   va_list fncArgs;
@@ -23,6 +26,11 @@ joystick::joystick( byte x, byte y, int numButtons, ... ) {
   }
   va_end( fncArgs );
 
+}
+
+void joystick::getPos( long &xPos, long &yPos ) {
+  xPos = _xPos;
+  yPos = _yPos;
 }
 
 byte joystick::getXPin() {
