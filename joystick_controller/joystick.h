@@ -11,6 +11,8 @@
 struct joystick_button {
   int pin;
   int state;
+  int prevState;
+  long lastPressed;
 };
 
 class joystick {

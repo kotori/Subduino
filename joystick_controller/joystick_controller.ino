@@ -14,14 +14,17 @@
 
 #include "joystick.h"
 
+// Joystick axis pins.
 const int JOY_X_AXIS_PIN = A0;
 const int JOY_Y_AXIS_PIN = A1;
 
+// Joystick button pins.
 const int JOY_BUTTON1_PIN = 10;
 const int JOY_BUTTON2_PIN = 11;
 const int JOY_BUTTON3_PIN = 12;
 const int JOY_BUTTON4_PIN = 13;
 
+// Mirf library pins.
 const int MIRF_CE_PIN = 7;
 const int MIRF_CSN_PIN = 8;
 
@@ -45,7 +48,7 @@ void setup() {
    *   number of joystick buttons
    *   each button pin (comma seperated)
    */
-  joy = new joystick( JOY_X_AXIS_PIN, JOY_Y_AXIS_PIN, NUM_BUTTONS, 
+  joy = new joystick( JOY_X_AXIS_PIN, JOY_Y_AXIS_PIN, NUM_BUTTONS,
 	JOY_BUTTON1_PIN, JOY_BUTTON2_PIN, JOY_BUTTON3_PIN, JOY_BUTTON4_PIN );
 
   /*
@@ -90,7 +93,9 @@ void loop() {
     joy->setYPos( -1 );
   }
 
-  // Iterate through the joystick buttons and check if any are pressed.
+  /*
+   * Iterate through the joystick buttons and check if any are pressed.
+   */
   for( int counter = 0; counter < NUM_BUTTONS; counter++ ) {
     if( joy->isButtonPressed( counter ) == true ) {
       // A button matching 'counter' has been pressed!
@@ -100,6 +105,5 @@ void loop() {
 
   delay( MAIN_LOOP_DELAY );
 }
-
 
 

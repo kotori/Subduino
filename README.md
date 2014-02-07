@@ -5,7 +5,7 @@ Opensource ROV design for underwater exploration.
 
 About
 ------
-The Subduino project aims to make a modular ROV system comprising of several slave Arduino MCUs to do the legwork of the processing while the master MCU can do its own processing idependantly.
+The Subduino project aims to make a modular ROV system comprising of several slave Arduino MCUs to do the legwork of the processing while the master MCU can do its own processing idependently.
 
 Compilation
 ------------
