@@ -5,6 +5,7 @@
 
 #define NUM_BUTTONS 4
 #define BUTTON_BOUNCE_DELAY 50
+#define JOY_STICK_ADJUSTMENT_MOD 102300
 
 #define uint8_t byte
 
