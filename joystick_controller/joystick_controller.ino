@@ -74,24 +74,8 @@ void setup() {
 }
 
 void loop() {
-  int x, y;
-
-  x = analogRead( joy->getXPin() );
-  y = analogRead( joy->getYPin() );
-
-  if( x ) {
-    joy->setXPos( 102300 / x - 100 );
-  }
-  else {
-    joy->setXPos( -1 );
-  }
-
-  if( y ) {
-    joy->setYPos( 102300 / y - 100 );
-  }
-  else {
-    joy->setYPos( -1 );
-  }
+  // Store the current x and y axis positions.
+  joy->pollAxis();
 
   /*
    * Iterate through the joystick buttons and check if any are pressed.

@@ -4,6 +4,13 @@
 
 #include "joystick.h"
 
+/*
+ * Class constructor
+ *  Takes the following arguments:
+ *   xAxisPin: joystick's x-axis pin (analog)
+ *   yAxisPin: joystick's y-axis pin (analog)
+ *   numButtons: number of button's on this joystick, followed by the button(s) pin number, comma separated.
+ */
 joystick::joystick( byte xAxisPin, byte yAxisPin, int numButtons, ... ) {
   _xPin = xAxisPin;
   _yPin = yAxisPin;
@@ -13,20 +20,58 @@ joystick::joystick( byte xAxisPin, byte yAxisPin, int numButtons, ... ) {
   _yPos = 0;
   _yPrevPos = 0;
 
-  // Now setup our buttons from the variable list.
-  va_list fncArgs;
-  va_start( fncArgs, numButtons );
-
-  // For every increment upto numButtons set a pin value.
-  for( int argCounter = 0; argCounter < numButtons; argCounter++ ) {
-    _button[argCounter].pin = va_arg( fncArgs, int );
-    _button[argCounter].state = LOW;
-    _button[argCounter].prevState = LOW;
-    _button[argCounter].lastPressed = 0;
+  if( numButtons > 0 ) {
+    // Now setup our buttons from the variable list.
+    va_list fncArgs;
+    // Start building our argument list from the values after numButtons.
+    va_start( fncArgs, numButtons );
+  
+    // For every increment upto numButtons set a pin value.
+    for( int argCounter = 0; argCounter < numButtons; argCounter++ ) {
+      // Pull the pin designation from the integers following the number of buttons.
+      _button[argCounter].pin = va_arg( fncArgs, int );
+      // Set the initial and previous state's to LOW.
+      _button[argCounter].state = LOW;
+      _button[argCounter].prevState = LOW;
+      // reset the last pressed counter.
+      _button[argCounter].lastPressed = 0;
+    }
+    // End the pin listing.
+    va_end( fncArgs );
   }
-  va_end( fncArgs );
 }
 
+/*
+ * Reads the x and y axis locations of the joystick and stores the new and old positions.
+ */
+void joystick::pollAxis() {
+  // Read new positions.
+  int xReading = analogRead( _xPin );
+  int yReading = analogRead( _yPin );
+
+  // Store old positions.
+  _xPrevPos = _xPos;
+  _yPrevPos = _yPos;
+
+  // Calculate position based upon reading.
+  if( xReading ) {
+    _xPos = JOY_STICK_ADJUSTMENT_MOD / xReading - 100;
+  }
+  else {
+    _xPos = -1;
+  }
+
+  if( yReading ) {
+    _yPos = JOY_STICK_ADJUSTMENT_MOD / yReading - 100;
+  }
+  else {
+    _yPos = -1;
+  }
+}
+
+/*
+ * Returns both the x and y axis positions as long pointers.
+ */
 void joystick::getPos( long &xPos, long &yPos ) {
   xPos = _xPos;
   yPos = _yPos;
@@ -112,7 +157,10 @@ boolean joystick::isButtonPressed( int id ) {
       }
     }
   }
+  // Store the button's previous state.
   _button[id].prevState = reading;
+
+  // Return true or false depending on whether we detected a valid change.
   return goodReading;
 }
 

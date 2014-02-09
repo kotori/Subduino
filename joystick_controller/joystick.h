@@ -41,6 +41,8 @@ public:
 
   boolean isButtonPressed( int id );
 
+  void pollAxis();
+
 private:
   byte _xPin;
   byte _yPin;
