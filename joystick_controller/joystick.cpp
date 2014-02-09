@@ -4,9 +4,9 @@
 
 #include "joystick.h"
 
-joystick::joystick( byte x, byte y, int numButtons, ... ) {
-  _xPin = x;
-  _yPin = y;
+joystick::joystick( byte xAxisPin, byte yAxisPin, int numButtons, ... ) {
+  _xPin = xAxisPin;
+  _yPin = yAxisPin;
 
   _xPos = 0;
   _xPrevPos = 0;
@@ -25,7 +25,6 @@ joystick::joystick( byte x, byte y, int numButtons, ... ) {
     _button[argCounter].lastPressed = 0;
   }
   va_end( fncArgs );
-
 }
 
 void joystick::getPos( long &xPos, long &yPos ) {
@@ -49,12 +48,28 @@ long joystick::getYPos() {
   return _yPos;
 }
 
+long joystick::getXPrevPos() {
+  return _xPrevPos;
+}
+
+long joystick::getYPrevPos() {
+  return _yPrevPos;
+}
+
 void joystick::setXPos( long pos ) {
   _xPos = pos;
 }
 
 void joystick::setYPos( long pos ) {
   _yPos = pos;
+}
+
+void joystick::setXPrevPos( long pos ) {
+  _xPrevPos = pos;
+}
+
+void joystick::setYPrevPos( long pos ) {
+  _yPrevPos = pos;
 }
 
 int joystick::getButton( int id ) {
