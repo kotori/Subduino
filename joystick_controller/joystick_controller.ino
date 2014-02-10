@@ -128,8 +128,8 @@ void loop() {
       // Perform some ACTION!
       
       // TODO!
-      //  commandToSend = SOME_ACTION;
-      Mirf.send( (byte*)  &data );
+      //  data = SOME_ACTION;
+      //  sendWirelessCmd( SOME_ACTION );
     }
   }
 
