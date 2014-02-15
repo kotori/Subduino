@@ -19,9 +19,7 @@
 #include <SPI.h>
 
 #include "globals.h"
-//#include "Mirf.h" // Ref: https://github.com/aaronds/arduino-nrf24l01
-//#include "nRF24L01.h"
-//#include "MirfHardwareSpiDriver.h"
+
 #include <Mirf.h> // Ref: https://github.com/aaronds/arduino-nrf24l01
 #include <nRF24L01.h>
 #include <MirfHardwareSpiDriver.h>
