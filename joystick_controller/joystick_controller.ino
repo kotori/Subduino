@@ -17,13 +17,11 @@
 
 #include <Arduino.h>
 #include <SPI.h>
-
-#include "globals.h"
-
-#include <Mirf.h> // Ref: https://github.com/aaronds/arduino-nrf24l01
+#include <Mirf.h>
 #include <nRF24L01.h>
 #include <MirfHardwareSpiDriver.h>
 
+#include "globals.h"
 #include "joystick.h"
 
 // Joystick axis pins.
@@ -37,13 +35,33 @@ const int JOY_BUTTON3_PIN = 6;
 const int JOY_BUTTON4_PIN = 5;
 
 // Mirf library pins.
-const int MIRF_CE_PIN = 9;
-const int MIRF_CSN_PIN = 10;
+const int CE_PIN = 9;
+const int CSN_PIN = 10;
 
 const int SERIAL_BAUDRATE = 9600;
-const int MAIN_LOOP_DELAY = 10;
+const int POLLING_INTERVAL = 60; // Control's the rate at which polling takes place.
+long previousMillis = 0;        // will store last time joystick was polled.
 
 joystick *joy;
+/*
+ * Stores the current joystick button presses.
+ * [0] = button #1
+ * [1] = button #2
+ * [2] = button #3
+ * [3] = button #4
+ */
+boolean buttons[4];
+
+// 0 - x axis
+// 1 - y axis
+// 2 - button1
+// 3 - button2
+// 4 - button3
+// 5 - button4
+int dataPacket[WIRELESS_PACKET_SIZE];
+int prevPacket[WIRELESS_PACKET_SIZE];
+
+boolean sendUpdate;
 
 void setup() {
   /*
@@ -57,84 +75,130 @@ void setup() {
   joy = new joystick( JOY_X_AXIS_PIN, JOY_Y_AXIS_PIN, NUM_BUTTONS,
 	JOY_BUTTON1_PIN, JOY_BUTTON2_PIN, JOY_BUTTON3_PIN, JOY_BUTTON4_PIN );
 
+  for( int i=0; i<NUM_BUTTONS; i++ ) {
+    buttons[i] = false;
+  }
+
+  sendUpdate = false;
+
   /*
-   * Mirf Configuration
+   * Set the SPI Driver.
    */
-  Mirf.cePin = MIRF_CE_PIN;
-  Mirf.csnPin = MIRF_CSN_PIN;
   Mirf.spi = &MirfHardwareSpi;
+  
+  /*
+   * Setup pins / SPI.
+   */
   Mirf.init();
+  
+  /*
+   * Configure reciving address.
+   */
+  Mirf.setRADDR( (byte *)"recv1" );
+  
+  /*
+   * Set the payload length to sizeof(unsigned long) the
+   * return type of millis().
+   *
+   * NB: payload on client and server must be the same.
+   */
+  Mirf.payload = 6;
+  
+  
+  /*
+   * Write channel and payload config then power up reciver.
+   */
+  Mirf.channel = 10;
 
-  // Set Mirf receiving address.
-  Mirf.setRADDR( (byte *) "commr" );
-
-  // Set Mirf transmit address.
-  Mirf.setTADDR((byte *)"comms");
-
- /*
-  * Set the payload length to sizeof(unsigned long) the
-  * return type of millis().
-  *
-  * Note: payload on client and server must be the same.
-  */
-  Mirf.payload = 1;
-
-  // Write channel and payload config then power up receiver.
   Mirf.config();
 
-  // Set 1MHz data rate - this increases the range slightly
-  Mirf.configRegister( RF_SETUP, 0x06 );
+  #ifdef DEBUGGING_MODE
+    // Initialize serial interface for debugging.
+    Serial.begin( SERIAL_BAUDRATE );
 
-#ifdef DEBUGGING_MODE
-  // Initialize serial interface for debugging.
-  Serial.begin( SERIAL_BAUDRATE );
+    // Read and print RF_SETUP
+    byte rf_setup = 0;
+    Mirf.readRegister( RF_SETUP, &rf_setup, sizeof(rf_setup) );
+    Serial.print( "rf_setup = " );
+    Serial.println( rf_setup, BIN );
 
-  Serial.println("Receiver Powered!");
-#endif
+    Serial.println("Receiver Powered!");
+  #endif
 }
 
-void sendWirelessCmd( byte cmd ) {
-  Mirf.send( (byte *) &cmd );
+void sendWirelessUpdate() {
 
-#ifdef DEBUGGING_MODE
-  Serial.print( "Sending: " );
-  Serial.println( cmd );
-#endif  
+  Mirf.setTADDR((byte *)"tran1");
 
-  // Do nothing while the command is being transmitted.
+  dataPacket[Mirf.payload];
+
+  Mirf.send( (byte *) &dataPacket );
+  
   while( Mirf.isSending() ) {
-    //
+    // Block while we are sending the command.
   }
+  #ifdef DEBUGGING_MODE
+    Serial.print( "Sent update @ " );
+    Serial.println( millis() );
+  #endif
+}
+
+void doLogic() {
+
+  for( int count = 0; count < WIRELESS_PACKET_SIZE; count++ ) {
+    // Setup the previous packet for comparison.
+    prevPacket[count] = dataPacket[count];
+  }
+
+  // Build the new packet.
+  dataPacket[0] = joy->getXPos();
+  dataPacket[1] = joy->getYPos();
+  dataPacket[2] = buttons[0];
+  dataPacket[3] = buttons[1];
+  dataPacket[4] = buttons[2];
+  dataPacket[5] = buttons[3];
+
+  // We only need to flag for a wireless update if something has changed.
+  for( int count = 0; count < WIRELESS_PACKET_SIZE; count++ ) {
+    if( dataPacket[count] != prevPacket[count] ) {
+      sendUpdate = true;
+    }
+  }
+  
 }
 
 void loop() {
-  unsigned long data;
+  sendUpdate = false;
+  unsigned long currentMillis = millis();
+ 
+  if( currentMillis - previousMillis > POLLING_INTERVAL ) {
+    // Store the current x and y axis positions.
+    joy->pollAxis();
 
-  // Store the current x and y axis positions.
-  joy->pollAxis();
+    /*
+     * Iterate through the joystick buttons and check if any are pressed.
+     */
+    for( int counter = 0; counter < NUM_BUTTONS; counter++ ) {
+      buttons[counter] = false;
+      if( joy->isButtonPressed( counter ) == true ) {
+        // Set the flag to tell the logic engine this is pressed.
+        buttons[counter] = true;
 
-  /*
-   * Iterate through the joystick buttons and check if any are pressed.
-   */
-  for( int counter = 0; counter < NUM_BUTTONS; counter++ ) {
-    if( joy->isButtonPressed( counter ) == true ) {
-
-#ifdef DEBUGGING_MODE
-      Serial.print( "Button: " );
-      Serial.print( counter );
-      Serial.println( " pressed!" );
-#endif
-
-      // A button matching 'counter' has been pressed!
-      // Perform some ACTION!
-      
-      // TODO!
-      //  data = SOME_ACTION;
-      //  sendWirelessCmd( SOME_ACTION );
+        #ifdef DEBUGGING_MODE
+          Serial.print( "Button: " );
+          Serial.print( counter );
+          Serial.println( " pressed!" );
+        #endif
+      }
     }
   }
 
-  delay( MAIN_LOOP_DELAY );
+  doLogic();
+
+  if( sendUpdate == true ) {
+    sendWirelessUpdate();
+  }
+
 }
 
 

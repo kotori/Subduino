@@ -58,14 +58,14 @@ void joystick::pollAxis() {
 
   // Calculate position based upon reading.
   if( xReading ) {
-    _xPos = JOY_STICK_ADJUSTMENT_MOD / xReading - 100;
+    _xPos = JOYSTICK_ADJUSTMENT_MOD / xReading - 100;
   }
   else {
     _xPos = -1;
   }
 
   if( yReading ) {
-    _yPos = JOY_STICK_ADJUSTMENT_MOD / yReading - 100;
+    _yPos = JOYSTICK_ADJUSTMENT_MOD / yReading - 100;
   }
   else {
     _yPos = -1;
@@ -105,10 +105,12 @@ long joystick::getYPrevPos() {
 }
 
 void joystick::setXPos( long pos ) {
+  _xPrevPos = _xPos;
   _xPos = pos;
 }
 
 void joystick::setYPos( long pos ) {
+  _yPrevPos = _yPos;
   _yPos = pos;
 }
 
