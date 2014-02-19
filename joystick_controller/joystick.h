@@ -10,6 +10,7 @@
 #define NUM_BUTTONS 4
 #define BUTTON_BOUNCE_DELAY 50
 #define JOYSTICK_ADJUSTMENT_MOD 102300
+#define ENABLE_AXIS_MODIFIER 1
 
 #define uint8_t byte
 

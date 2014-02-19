@@ -129,7 +129,7 @@ void setup() {
     Serial.print( "rf_setup = " );
     Serial.println( rf_setup, BIN );
 
-    Serial.println("Receiver Powered!");
+    Serial.println( "Receiver Powered!" );
   #endif
 }
 

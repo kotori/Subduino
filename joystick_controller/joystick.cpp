@@ -56,7 +56,24 @@ void joystick::pollAxis() {
   _xPrevPos = _xPos;
   _yPrevPos = _yPos;
 
-  // Calculate position based upon reading.
+
+#ifndef ENABLE_AXIS_MODIFIER
+  // Store the reading without adjustments.
+  if( xReading ) {
+    _xPos = xReading;
+  }
+  else {
+    _xPos = -1;
+  }
+
+  if( yReading ) {
+    _yPos = yReading;
+  }
+  else {
+    _yPos = -1;
+  }
+#else
+  // Calculate position based upon reading and use adjustments.
   if( xReading ) {
     _xPos = JOYSTICK_ADJUSTMENT_MOD / xReading - 100;
   }
@@ -70,6 +87,8 @@ void joystick::pollAxis() {
   else {
     _yPos = -1;
   }
+#endif
+
 }
 
 /*
