@@ -4,7 +4,7 @@
  *  using a converted PC gamepad joystick and a wireless serial adapter
  *  for sending commands to the remote buoy down to the ROV.
  *
- * Pin mapping for nRF24L01+ to Arduino:
+ * Pin mapping for nRF24L01+ to Arduino ATmega328:
  *   Arduino pins     nRF radio pins
  *   GND (-)		1
  *   3v3 (+)		2
@@ -24,6 +24,9 @@
 #include "globals.h"
 #include "joystick.h"
 
+#define TRANSMIT_ADDR "trns1"
+#define RECEIVER_ADDR "rcvr1"
+
 // Joystick axis pins.
 const int JOY_X_AXIS_PIN = A0;
 const int JOY_Y_AXIS_PIN = A1;
@@ -42,22 +45,27 @@ const int SERIAL_BAUDRATE = 9600;
 const int POLLING_INTERVAL = 60; // Control's the rate at which polling takes place.
 long previousMillis = 0;        // will store last time joystick was polled.
 
+// Joystick object for keeping track of axis changes and button presses.
 joystick *joy;
+
 /*
  * Stores the current joystick button presses.
- * [0] = button #1
- * [1] = button #2
- * [2] = button #3
- * [3] = button #4
+ * [0] - button #1
+ * [1] - button #2
+ * [2] - button #3
+ * [3] - button #4
  */
 boolean buttons[4];
 
-// 0 - x axis
-// 1 - y axis
-// 2 - button1
-// 3 - button2
-// 4 - button3
-// 5 - button4
+/*
+ * This is the packet that is being transmitted.
+ * [0] - x axis
+ * [1] - y axis
+ * [2] - button #1
+ * [3] - button #2
+ * [4] - button #3
+ * [5] - button #4
+ */
 int dataPacket[WIRELESS_PACKET_SIZE];
 int prevPacket[WIRELESS_PACKET_SIZE];
 
@@ -94,7 +102,7 @@ void setup() {
   /*
    * Configure reciving address.
    */
-  Mirf.setRADDR( (byte *)"recv1" );
+  Mirf.setRADDR( (byte *)RECEIVER_ADDR );
   
   /*
    * Set the payload length to sizeof(unsigned long) the
@@ -102,13 +110,12 @@ void setup() {
    *
    * NB: payload on client and server must be the same.
    */
-  Mirf.payload = 6;
-  
+  Mirf.payload = WIRELESS_PACKET_SIZE;
   
   /*
    * Write channel and payload config then power up reciver.
    */
-  Mirf.channel = 10;
+  Mirf.channel = WIRELESS_CHANNEL;
 
   Mirf.config();
 
@@ -128,7 +135,7 @@ void setup() {
 
 void sendWirelessUpdate() {
 
-  Mirf.setTADDR((byte *)"tran1");
+  Mirf.setTADDR((byte *)TRANSMIT_ADDR );
 
   dataPacket[Mirf.payload];
 

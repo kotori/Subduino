@@ -132,11 +132,9 @@ void joystick::setButton( int id, int newPin ) {
 
 /*
  *  Returns true or false depending on the state of the button.
- *   TODO!
- *    Should have some sort of a debounce check built in.
  */
 boolean joystick::isButtonPressed( int id ) {
-  // Set the initial value of the reading as bad.
+  // Set the initial value of the reading as bad or not pressed.
   boolean goodReading = false;
 
   // Get the state of the passed button.

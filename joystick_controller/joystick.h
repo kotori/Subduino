@@ -13,13 +13,6 @@
 
 #define uint8_t byte
 
-struct joystick_button {
-  int pin;
-  int state;
-  int prevState;
-  long lastPressed;
-};
-
 class joystick {
 public:
   joystick( byte xAxisPin, byte yAxisPin, int numButtons, ... );
@@ -49,6 +42,14 @@ public:
   void pollAxis();
 
 private:
+
+struct joystick_button {
+  int pin;
+  int state;
+  int prevState;
+  long lastPressed;
+};
+
   byte _xPin;
   byte _yPin;
 
