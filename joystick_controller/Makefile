@@ -1,4 +1,5 @@
-BOARD_TAG    = atmega328
+BOARD_TAG    	= atmega644
+ALTERNATE_CORE  = Sanguino
 ARDUINO_LIBS =
 ARDUINO_PORT = /dev/ttyS0
 MONITOR_PORT  = /dev/ttyS0
